@@ -1,7 +1,8 @@
 import {StyleSheet, Text, View,Alert } from 'react-native'
 import React,{useContext, useState} from 'react'
-import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
 import { AuthContext } from '../context/AuthContext';
+import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
+
 import { registerUser } from '../firebase/DbAccess';
 import Validator from '../components/Validator';
 
@@ -18,7 +19,7 @@ const ProviderSignup = ({navigation}:any):React.JSX.Element => {
 
   const [errorText,setErrorText] = useState("");
 
-  const {userType,setLoading,loading} = useContext(AuthContext);
+  const {userType,setLoading,loading,user} = useContext(AuthContext);
 
   const handleTextChange = (text: string) => {
     // Remove any existing hyphens and non-digit characters
@@ -27,7 +28,7 @@ const ProviderSignup = ({navigation}:any):React.JSX.Element => {
     // Insert hyphens after every 4 digits
     let formattedValue = '';
     for (let i = 0; i < cleanedText.length; i += 4) {
-      const segment = cleanedText.substring(i, 4);
+      const segment = cleanedText.substring(i, i + 4);
       if (segment) {
         formattedValue += segment;
         if (i + 4 < cleanedText.length) {
@@ -45,46 +46,47 @@ const ProviderSignup = ({navigation}:any):React.JSX.Element => {
 
   const handleSubmit = async ()=>{
     setErrorText("");
-    setLoading(true);
+    
     if(password === confirmPassword){
       if(name && email && contact && address && aadhar && services && password && userType){
+        setLoading(true);
+        const userData ={
+          name,
+          email,
+          contact,
+          address,
+          aadhar,
+          services,
+          password,
+          userType
+        }
 
-      const userData ={
-        name,
-        email,
-        contact,
-        address,
-        aadhar,
-        services,
-        password,
-        userType
-      }
+        const valid = Validator(userData);
 
-      const valid = Validator(userData);
+        if(valid === true){
+          registerUser(userData).then(()=>{
+            Alert.alert("Sign-up Successful!!!")
+            setName("");
+            setEmail("");
+            setContact("");
+            setAddress("");
+            setAadhar("");
+            setServices("");
+            setPassword("");
+            setConfirmPassword("");      
+            setLoading(false);
+        })
+        }else{
+          setErrorText(valid);
+        }
 
-      if(valid === true){
-        registerUser(userData).then(()=>{
-          Alert.alert("Sign-up Successful!!!")
-          setName("");
-          setEmail("");
-          setContact("");
-          setAddress("");
-          setAadhar("");
-          setServices("");
-          setPassword("");
-          setConfirmPassword("");      
-      })
+      // setLoading(false);
       }else{
-        setErrorText(valid);
-      }
-
-      setLoading(false);
-      }else{
-        setLoading(false)
+        // setLoading(false)
         setErrorText("Please fill all field's!")
       }
     }else{
-      setLoading(true);
+      // setLoading(true);
       setErrorText("Password does not match!")
     }
   }

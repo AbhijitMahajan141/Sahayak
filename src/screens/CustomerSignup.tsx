@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View,Alert } from 'react-native'
 import React, { useState,useContext } from 'react'
-import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
 import { AuthContext } from '../context/AuthContext';
+import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
+
 import { registerUser } from '../firebase/DbAccess';
 import Validator from '../components/Validator';
 
@@ -24,47 +25,47 @@ const CustomerSignup = ({navigation}:any):React.JSX.Element => {
 
   const handleSubmit = async ()=>{
     setErrorText("");
-    setLoading(true);
-    console.log("1:",loading);
+    
     if(password === confirmPassword){
       if(name && email && contact && address && password && userType){
-
-      const userData ={
-        name,
-        email,
-        contact,
-        address,
-        password,
-        userType
-      }
+        setLoading(true);
+        const userData ={
+          name,
+          email,
+          contact,
+          address,
+          password,
+          userType
+        }
 
       const valid = Validator(userData);
 
-      if(valid === true){
-        registerUser(userData).then(()=>{
-          Alert.alert("Sign-up Successful!!!")
-          setName("");
-          setEmail("");
-          setContact("");
-          setAddress("");
-          setPassword("");
-          setConfirmPassword("");
-          setErrorText("");
-      })
-      }else{
-        setErrorText(valid);
-      }
+        if(valid === true){
+          registerUser(userData).then(()=>{
+            Alert.alert("Sign-up Successful!!!")
+            setName("");
+            setEmail("");
+            setContact("");
+            setAddress("");
+            setPassword("");
+            setConfirmPassword("");
+            setErrorText("");
+            setLoading(false);
+        })
+        }else{
+          setErrorText(valid);
+        }
       
-      setLoading(false);
-      console.log("2:",loading);
+      // setLoading(false);
+      
       }else{
-        setLoading(false)
-        console.log("3:",loading);
+        // setLoading(false)
+        
         setErrorText("Please fill all field's!")
       }
     }else{
-      setLoading(false)
-      console.log("4:",loading);
+      // setLoading(false)
+ 
       setErrorText("Password does not match!")
     }
   }

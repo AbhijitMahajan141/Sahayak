@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View,Pressable } from 'react-native'
+import { Button, StyleSheet, Text, View,Pressable, ActivityIndicator } from 'react-native'
 import React from 'react'
 
 type CustomButtonProps = {
@@ -23,7 +23,7 @@ const CustomButton = ({handlePress,bgDark,bgLight,text,description,loading}:Cust
                 ]}
                 disabled={loading}
             >
-                {loading?<Text style={styles.buttonText}>Processing...</Text>:<Text style={styles.buttonText}>{text}</Text>}
+                {loading?<ActivityIndicator size="large" color="#ffffff" />:<Text style={styles.buttonText}>{text}</Text>}
                 {description && <Text  style={{color:"#f2f2f2"}} >{description}</Text>}
     </Pressable>
   )

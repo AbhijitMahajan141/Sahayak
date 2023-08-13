@@ -8,8 +8,7 @@ import UserSelection from '../screens/UserSelection';
 import CustomerSignup from '../screens/CustomerSignup';
 import ProviderSignup from '../screens/ProviderSignup';
 import SigninScreen from '../screens/SigninScreen';
-import Home from '../screens/Home';
-
+import BottomTabNavigator from './BottomTabNavigator';
 
 // Create Stack Navigator
 const Stack = createNativeStackNavigator();
@@ -22,7 +21,8 @@ const Navigation: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={user && userType ? 'Home' : 'Welcome'}>
         {user && userType ? (
-          <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+          // <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+          <Stack.Screen name='Home' component={BottomTabNavigator} options={{headerShown: false}} />
           ):
           (
           <>

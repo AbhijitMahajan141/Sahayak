@@ -1,8 +1,13 @@
 import React from 'react';
 
 interface DataValidatorProps {
-  [key: string]: string; // Accept any number of props with string values
-  [key: number]: string; // Accept any number of props with number values
+  name:string,
+  email:string,
+  contact:string,
+  address:string,
+  aadhar?: string,
+  services?:string[],
+  password:string,
 }
 
 const isEmailValid = (email: string): boolean => {

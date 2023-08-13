@@ -2,9 +2,9 @@ import { StyleSheet, Text, View,Alert } from 'react-native'
 import React, { useState,useContext } from 'react'
 import { AuthContext } from '../context/AuthContext';
 import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
-
 import { registerUser } from '../firebase/DbAccess';
 import Validator from '../components/Validator';
+import Snackbar from 'react-native-snackbar';
 
 const CustomerSignup = ({navigation}:any):React.JSX.Element => {
 
@@ -21,6 +21,12 @@ const CustomerSignup = ({navigation}:any):React.JSX.Element => {
 
   const handleSignInPress = ()=>{
       navigation.navigate("Signin")
+      setName("");
+      setEmail("");
+      setContact("");
+      setAddress("");
+      setPassword("");
+      setConfirmPassword("");
   }
 
   const handleSubmit = async ()=>{
@@ -41,8 +47,8 @@ const CustomerSignup = ({navigation}:any):React.JSX.Element => {
       const valid = Validator(userData);
 
         if(valid === true){
-          registerUser(userData).then(()=>{
-            Alert.alert("Sign-up Successful!!!")
+          const message = registerUser(userData).then(()=>{
+            Snackbar.show({text:"Sign-up Successful!!!",duration:Snackbar.LENGTH_LONG,})
             setName("");
             setEmail("");
             setContact("");
@@ -52,11 +58,14 @@ const CustomerSignup = ({navigation}:any):React.JSX.Element => {
             setErrorText("");
             setLoading(false);
         })
+        {message ?? Snackbar.show({text:message,duration:Snackbar.LENGTH_LONG})}
         }else{
+          setLoading(false);
           setErrorText(valid);
+          
         }
       
-      // setLoading(false);
+      
       
       }else{
         // setLoading(false)

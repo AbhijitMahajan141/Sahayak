@@ -7,38 +7,28 @@ import { AuthContext } from '../context/AuthContext';
 import { CustomFormContainer, CustomFormField } from '../components/CustomFormField';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { googleSignin } from '../firebase/DbAccess';
+import Snackbar from 'react-native-snackbar';
 
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-// interface Props {
-//   navigation: any;
-//   userType: string;
-//   loading: boolean;
-//   setLoading: (loading: boolean) => void;
-  
-// }
-
-const SigninScreen = ({navigation}
-  // userType,
-  // loading,
-  // setLoading}
-  :any) => {
+const SigninScreen = ({navigation}:any) => {
 
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [errorText,setErrorText] = useState("");
 
   const {userType,setLoading,loading,user} = useContext(AuthContext);
-  
 
   const handleSignupPress = ()=>{
     if (userType === "Consumer") {
       navigation.navigate("ConsumerSignup")
+      setEmail("")
+      setPassword("")
+      setErrorText("")
     }else if(userType === "Provider"){
       navigation.navigate("ProviderSignup")
+      setEmail("")
+      setPassword("")
+      setErrorText("")
     }
   }
 
@@ -47,9 +37,14 @@ const SigninScreen = ({navigation}
     
     if( !user && userType && email && password){
       setLoading(true);
-      try {      
-        await auth().signInWithEmailAndPassword(email,password)
-
+      try {
+        const data = await firestore().collection('users').where('email',"==",email).where('role','==',userType).get();
+        if(!data.empty){
+          await auth().signInWithEmailAndPassword(email,password);
+        }else{
+          setErrorText(`User is not registered as: ${userType}`)
+        }
+        
         setEmail("")
         setPassword("")
         setLoading(false);
@@ -72,43 +67,21 @@ const SigninScreen = ({navigation}
   }
 
   const handleGoogleSignin = async ()=>{
-  
-  try {
-    await GoogleSignin.hasPlayServices();
-  
-    const {user,idToken} = await GoogleSignin.signIn();
-
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      
-    const u = await auth().signInWithCredential(googleCredential);
-    const uid = u.user.uid
-    const name = user.name;
-    const email = user.email;
-    const contact = u.user?.phoneNumber ?? "0000000000";
-    const address = "Signed in using google."
-    const password = ""
-    const consumerData = {
-      uid,
-      name,
-      email,
-      contact,
-      address,
-      password
-    }
-    await firestore().collection('consumer').doc(u.user.uid).set(consumerData);
-  } catch (error:any) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      Alert.alert("User canceled the sign-in.")
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      console.log("User sign-in In progress.")
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      Alert.alert("Google Play Services not available.")
-    } else {
-      console.log(error);
     
+    {userType && 
+      googleSignin(userType).then((message)=>
+      {
+        message &&
+        Snackbar.show({
+          text: message,
+          duration: Snackbar.LENGTH_LONG,
+          // marginBottom:10,
+
+        })
+      })
     }
   }
-  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{userType}</Text>

@@ -12,8 +12,8 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 GoogleSignin.configure({
       // webClientId: process.env.REACT_APP_WEB_API_ID,
       scopes: ['profile', 'email'],
-      webClientId: "",
-      offlineAccess: true,
+      webClientId: "784807595877-qhl46vu0pun1rndu12jg102i3kjqgvmr.apps.googleusercontent.com",
+      // offlineAccess: true,
     });
 // console.log(process.env.REACT_APP_WEB_API_ID);
 

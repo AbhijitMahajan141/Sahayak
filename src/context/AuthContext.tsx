@@ -55,7 +55,7 @@ export const AuthProvider:React.FC<AuthProviderProps> = ({ children }) => {
         })
 
         // cleaning lister when component unmounts
-        return ()=>unsubscribe();;
+        return ()=>unsubscribe();
     },[])
 
     //Memoized the context value to prevent unnecessary re-renders
